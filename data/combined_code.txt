@@ -1,0 +1,2894 @@
+Directory structure:
+└── lmx154-portfolio/
+    ├── README.md
+    ├── LICENSE
+    ├── eslint.config.js
+    ├── index.html
+    ├── package.json
+    ├── postcss.config.js
+    ├── tailwind.config.js
+    ├── tsconfig.app.json
+    ├── tsconfig.json
+    ├── tsconfig.node.json
+    ├── vite.config.ts
+    ├── public/
+    │   └── fronterahacks2024.JPG
+    └── src/
+        ├── App.tsx
+        ├── index.css
+        ├── main.tsx
+        ├── vite-env.d.ts
+        ├── components/
+        │   ├── ProjectTile.tsx
+        │   ├── SVGBackground.tsx
+        │   └── Tile.tsx
+        └── pages/
+            ├── About.tsx
+            ├── Contact.tsx
+            ├── Home.tsx
+            └── Projects.tsx
+
+
+Files Content:
+
+================================================
+File: README.md
+================================================
+# Portfolio Website
+
+A modern, responsive portfolio website built with React, TypeScript, and Tailwind CSS.
+
+## Features
+
+### Dynamic Background Cycling
+- Seamless transitions between SVG background patterns
+- Automated cycling every 4 seconds using React hooks
+- Smooth opacity transitions for a polished look
+
+### Responsive Design with Tailwind CSS
+- Clean and modern UI components
+- Mobile-first approach
+- Custom styling using Tailwind's utility classes
+- Smooth scrolling between sections
+- Dynamic color schemes for technology labels
+
+### Project Showcase
+- Interactive project tiles with hover effects
+- Technology label system with color coding
+- Support for project images
+- Responsive grid layout (1 column on mobile, 2 columns on desktop)
+
+### Contact Form with reCAPTCHA
+- Prevents spam by using Google reCAPTCHA
+- Displays error message if reCAPTCHA verification is not completed
+- Shows success message upon successful form submission
+
+## Tech Stack
+
+- React 18
+- TypeScript
+- Tailwind CSS
+- Vite
+
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone git@github.com:Lmx154/portfolio.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd portfolio
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+### Setting Up reCAPTCHA
+1. Create a `.env` file in the root directory of the project.
+2. Add the following environment variable to the `.env` file:
+   ```properties
+   VITE_RECAPTCHA_SITE_KEY=your-recaptcha-site-key
+   ```
+   Replace `your-recaptcha-site-key` with your actual reCAPTCHA site key.
+
+### Setting Up EmailJS
+1. Sign up for a free account at [EmailJS.com](https://www.emailjs.com/)
+2. Create a new Email Service (e.g., Gmail, Outlook, etc.)
+3. Create an email template with the following variables:
+   - `{{to_name}}`: Your name (recipient)
+   - `{{from_name}}`: Sender's name
+   - `{{from_email}}`: Sender's email
+   - `{{message}}`: Message content
+4. Add these environment variables to your `.env` file:
+   ```properties
+   VITE_EMAILJS_SERVICE_ID=your-service-id
+   VITE_EMAILJS_TEMPLATE_ID=your-template-id
+   VITE_EMAILJS_PUBLIC_KEY=your-public-key
+   ```
+   Replace the values with your actual EmailJS credentials from your dashboard.
+
+### Running the Project
+To start the development server, run:
+```bash
+npm run dev
+```
+
+### Building the Project
+To build the project for production, run:
+```bash
+npm run build
+```
+
+### Previewing the Build
+To preview the production build, run:
+```bash
+npm run preview
+```
+
+## License
+This project is licensed under the MIT License.
+
+================================================
+File: LICENSE
+================================================
+MIT License
+
+Copyright (c) 2024 Luis Martinez
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+================================================
+File: eslint.config.js
+================================================
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+
+export default tseslint.config(
+  { ignores: ['dist'] },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
+  },
+)
+
+
+================================================
+File: index.html
+================================================
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="..\logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Luis A Martinez</title>
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="/rocketGame.png" as="image" />
+    <link rel="preload" href="/portfolio.png" as="image" />
+
+    <!-- Preconnect to external domains if any -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+================================================
+File: package.json
+================================================
+{
+  "name": "portfolio",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "@react-spring/web": "^9.7.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-simple-typewriter": "^5.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "dotenv": "^16.4.7",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "postcss": "^8.4.49",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "^8.18.2",
+    "vite": "^6.0.5"
+  }
+}
+
+
+================================================
+File: postcss.config.js
+================================================
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+
+
+================================================
+File: tailwind.config.js
+================================================
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: 'media', // or 'class'
+  theme: {
+    accentColor: ({ theme }) => ({
+      ...theme('colors'),
+      auto: 'auto',
+    }),
+    animation: {
+      none: 'none',
+      spin: 'spin 1s linear infinite',
+      ping: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
+      pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      bounce: 'bounce 1s infinite',
+    },
+    aria: {
+      busy: 'busy="true"',
+      checked: 'checked="true"',
+      disabled: 'disabled="true"',
+      expanded: 'expanded="true"',
+      hidden: 'hidden="true"',
+      pressed: 'pressed="true"',
+      readonly: 'readonly="true"',
+      required: 'required="true"',
+      selected: 'selected="true"',
+    },
+    aspectRatio: {
+      auto: 'auto',
+      square: '1 / 1',
+      video: '16 / 9',
+    },
+    backdropBlur: ({ theme }) => theme('blur'),
+    backdropBrightness: ({ theme }) => theme('brightness'),
+    backdropContrast: ({ theme }) => theme('contrast'),
+    backdropGrayscale: ({ theme }) => theme('grayscale'),
+    backdropHueRotate: ({ theme }) => theme('hueRotate'),
+    backdropInvert: ({ theme }) => theme('invert'),
+    backdropOpacity: ({ theme }) => theme('opacity'),
+    backdropSaturate: ({ theme }) => theme('saturate'),
+    backdropSepia: ({ theme }) => theme('sepia'),
+    backgroundColor: ({ theme }) => theme('colors'),
+    backgroundImage: {
+      none: 'none',
+      'gradient-to-t': 'linear-gradient(to top, var(--tw-gradient-stops))',
+      'gradient-to-tr': 'linear-gradient(to top right, var(--tw-gradient-stops))',
+      'gradient-to-r': 'linear-gradient(to right, var(--tw-gradient-stops))',
+      'gradient-to-br': 'linear-gradient(to bottom right, var(--tw-gradient-stops))',
+      'gradient-to-b': 'linear-gradient(to bottom, var(--tw-gradient-stops))',
+      'gradient-to-bl': 'linear-gradient(to bottom left, var(--tw-gradient-stops))',
+      'gradient-to-l': 'linear-gradient(to left, var(--tw-gradient-stops))',
+      'gradient-to-tl': 'linear-gradient(to top left, var(--tw-gradient-stops))',
+    },
+    backgroundOpacity: ({ theme }) => theme('opacity'),
+    backgroundPosition: {
+      bottom: 'bottom',
+      center: 'center',
+      left: 'left',
+      'left-bottom': 'left bottom',
+      'left-top': 'left top',
+      right: 'right',
+      'right-bottom': 'right bottom',
+      'right-top': 'right top',
+      top: 'top',
+    },
+    backgroundSize: {
+      auto: 'auto',
+      cover: 'cover',
+      contain: 'contain',
+    },
+    blur: {
+      0: '0',
+      none: '',
+      sm: '4px',
+      DEFAULT: '8px',
+      md: '12px',
+      lg: '16px',
+      xl: '24px',
+      '2xl': '40px',
+      '3xl': '64px',
+    },
+    borderColor: ({ theme }) => ({
+      ...theme('colors'),
+      DEFAULT: theme('colors.gray.200', 'currentColor'),
+    }),
+    borderOpacity: ({ theme }) => theme('opacity'),
+    borderRadius: {
+      none: '0px',
+      sm: '0.125rem',
+      DEFAULT: '0.25rem',
+      md: '0.375rem',
+      lg: '0.5rem',
+      xl: '0.75rem',
+      '2xl': '1rem',
+      '3xl': '1.5rem',
+      full: '9999px',
+    },
+    borderSpacing: ({ theme }) => ({
+      ...theme('spacing'),
+    }),
+    borderWidth: {
+      DEFAULT: '1px',
+      0: '0px',
+      2: '2px',
+      4: '4px',
+      8: '8px',
+    },
+    boxShadow: {
+      sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+      DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+      md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+      lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+      xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+      '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
+      inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
+      none: 'none',
+    },
+    boxShadowColor: ({ theme }) => theme('colors'),
+    brightness: {
+      0: '0',
+      50: '.5',
+      75: '.75',
+      90: '.9',
+      95: '.95',
+      100: '1',
+      105: '1.05',
+      110: '1.1',
+      125: '1.25',
+      150: '1.5',
+      200: '2',
+    },
+    caretColor: ({ theme }) => theme('colors'),
+    colors: ({ colors }) => ({
+      inherit: colors.inherit,
+      current: colors.current,
+      transparent: colors.transparent,
+      black: colors.black,
+      white: colors.white,
+      slate: colors.slate,
+      gray: colors.gray,
+      zinc: colors.zinc,
+      neutral: colors.neutral,
+      stone: colors.stone,
+      red: colors.red,
+      orange: colors.orange,
+      amber: colors.amber,
+      yellow: colors.yellow,
+      lime: colors.lime,
+      green: colors.green,
+      emerald: colors.emerald,
+      teal: colors.teal,
+      cyan: colors.cyan,
+      sky: colors.sky,
+      blue: colors.blue,
+      indigo: colors.indigo,
+      violet: colors.violet,
+      purple: colors.purple,
+      fuchsia: colors.fuchsia,
+      pink: colors.pink,
+      rose: colors.rose,
+    }),
+    columns: {
+      auto: 'auto',
+      1: '1',
+      2: '2',
+      3: '3',
+      4: '4',
+      5: '5',
+      6: '6',
+      7: '7',
+      8: '8',
+      9: '9',
+      10: '10',
+      11: '11',
+      12: '12',
+      '3xs': '16rem',
+      '2xs': '18rem',
+      xs: '20rem',
+      sm: '24rem',
+      md: '28rem',
+      lg: '32rem',
+      xl: '36rem',
+      '2xl': '42rem',
+      '3xl': '48rem',
+      '4xl': '56rem',
+      '5xl': '64rem',
+      '6xl': '72rem',
+      '7xl': '80rem',
+    },
+    container: {},
+    content: {
+      none: 'none',
+    },
+    contrast: {
+      0: '0',
+      50: '.5',
+      75: '.75',
+      100: '1',
+      125: '1.25',
+      150: '1.5',
+      200: '2',
+    },
+    cursor: {
+      auto: 'auto',
+      default: 'default',
+      pointer: 'pointer',
+      wait: 'wait',
+      text: 'text',
+      move: 'move',
+      help: 'help',
+      'not-allowed': 'not-allowed',
+      none: 'none',
+      'context-menu': 'context-menu',
+      progress: 'progress',
+      cell: 'cell',
+      crosshair: 'crosshair',
+      'vertical-text': 'vertical-text',
+      alias: 'alias',
+      copy: 'copy',
+      'no-drop': 'no-drop',
+      grab: 'grab',
+      grabbing: 'grabbing',
+      'all-scroll': 'all-scroll',
+      'col-resize': 'col-resize',
+      'row-resize': 'row-resize',
+      'n-resize': 'n-resize',
+      'e-resize': 'e-resize',
+      's-resize': 's-resize',
+      'w-resize': 'w-resize',
+      'ne-resize': 'ne-resize',
+      'nw-resize': 'nw-resize',
+      'se-resize': 'se-resize',
+      'sw-resize': 'sw-resize',
+      'ew-resize': 'ew-resize',
+      'ns-resize': 'ns-resize',
+      'nesw-resize': 'nesw-resize',
+      'nwse-resize': 'nwse-resize',
+      'zoom-in': 'zoom-in',
+      'zoom-out': 'zoom-out',
+    },
+    divideColor: ({ theme }) => theme('borderColor'),
+    divideOpacity: ({ theme }) => theme('borderOpacity'),
+    divideWidth: ({ theme }) => theme('borderWidth'),
+    dropShadow: {
+      sm: '0 1px 1px rgb(0 0 0 / 0.05)',
+      DEFAULT: ['0 1px 2px rgb(0 0 0 / 0.1)', '0 1px 1px rgb(0 0 0 / 0.06)'],
+      md: ['0 4px 3px rgb(0 0 0 / 0.07)', '0 2px 2px rgb(0 0 0 / 0.06)'],
+      lg: ['0 10px 8px rgb(0 0 0 / 0.04)', '0 4px 3px rgb(0 0 0 / 0.1)'],
+      xl: ['0 20px 13px rgb(0 0 0 / 0.03)', '0 8px 5px rgb(0 0 0 / 0.08)'],
+      '2xl': '0 25px 25px rgb(0 0 0 / 0.15)',
+      none: '0 0 #0000',
+    },
+    fill: ({ theme }) => ({
+      none: 'none',
+      ...theme('colors'),
+    }),
+    flex: {
+      1: '1 1 0%',
+      auto: '1 1 auto',
+      initial: '0 1 auto',
+      none: 'none',
+    },
+    flexBasis: ({ theme }) => ({
+      auto: 'auto',
+      ...theme('spacing'),
+      '1/2': '50%',
+      '1/3': '33.333333%',
+      '2/3': '66.666667%',
+      '1/4': '25%',
+      '2/4': '50%',
+      '3/4': '75%',
+      '1/5': '20%',
+      '2/5': '40%',
+      '3/5': '60%',
+      '4/5': '80%',
+      '1/6': '16.666667%',
+      '2/6': '33.333333%',
+      '3/6': '50%',
+      '4/6': '66.666667%',
+      '5/6': '83.333333%',
+      '1/12': '8.333333%',
+      '2/12': '16.666667%',
+      '3/12': '25%',
+      '4/12': '33.333333%',
+      '5/12': '41.666667%',
+      '6/12': '50%',
+      '7/12': '58.333333%',
+      '8/12': '66.666667%',
+      '9/12': '75%',
+      '10/12': '83.333333%',
+      '11/12': '91.666667%',
+      full: '100%',
+    }),
+    flexGrow: {
+      0: '0',
+      DEFAULT: '1',
+    },
+    flexShrink: {
+      0: '0',
+      DEFAULT: '1',
+    },
+    fontFamily: {
+      sans: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        'system-ui',
+        'Roboto',
+        'Helvetica Neue',
+        'Arial',
+        'Noto Sans',
+        'sans-serif',
+        'Apple Color Emoji',
+        'Segoe UI Emoji',
+        'Segoe UI Symbol',
+        'Noto Color Emoji',
+      ],
+      serif: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+      mono: [
+        'ui-monospace',
+        'SFMono-Regular',
+        'Menlo',
+        'Monaco',
+        'Consolas',
+        '"Liberation Mono"',
+        '"Courier New"',
+        'monospace',
+      ],
+    },
+    fontSize: {
+      xs: ['0.75rem', { lineHeight: '1rem' }],
+      sm: ['0.875rem', { lineHeight: '1.25rem' }],
+      base: ['1rem', { lineHeight: '1.5rem' }],
+      lg: ['1.125rem', { lineHeight: '1.75rem' }],
+      xl: ['1.25rem', { lineHeight: '1.75rem' }],
+      '2xl': ['1.5rem', { lineHeight: '2rem' }],
+      '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+      '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+      '5xl': ['3rem', { lineHeight: '1' }],
+      '6xl': ['3.75rem', { lineHeight: '1' }],
+      '7xl': ['4.5rem', { lineHeight: '1' }],
+      '8xl': ['6rem', { lineHeight: '1' }],
+      '9xl': ['8rem', { lineHeight: '1' }],
+    },
+    fontWeight: {
+      thin: '100',
+      extralight: '200',
+      light: '300',
+      normal: '400',
+      medium: '500',
+      semibold: '600',
+      bold: '700',
+      extrabold: '800',
+      black: '900',
+    },
+    gap: ({ theme }) => theme('spacing'),
+    gradientColorStops: ({ theme }) => theme('colors'),
+    gradientColorStopPositions: {
+      '0%': '0%',
+      '5%': '5%',
+      '10%': '10%',
+      '15%': '15%',
+      '20%': '20%',
+      '25%': '25%',
+      '30%': '30%',
+      '35%': '35%',
+      '40%': '40%',
+      '45%': '45%',
+      '50%': '50%',
+      '55%': '55%',
+      '60%': '60%',
+      '65%': '65%',
+      '70%': '70%',
+      '75%': '75%',
+      '80%': '80%',
+      '85%': '85%',
+      '90%': '90%',
+      '95%': '95%',
+      '100%': '100%',
+    },
+    grayscale: {
+      0: '0',
+      DEFAULT: '100%',
+    },
+    gridAutoColumns: {
+      auto: 'auto',
+      min: 'min-content',
+      max: 'max-content',
+      fr: 'minmax(0, 1fr)',
+    },
+    gridAutoRows: {
+      auto: 'auto',
+      min: 'min-content',
+      max: 'max-content',
+      fr: 'minmax(0, 1fr)',
+    },
+    gridColumn: {
+      auto: 'auto',
+      'span-1': 'span 1 / span 1',
+      'span-2': 'span 2 / span 2',
+      'span-3': 'span 3 / span 3',
+      'span-4': 'span 4 / span 4',
+      'span-5': 'span 5 / span 5',
+      'span-6': 'span 6 / span 6',
+      'span-7': 'span 7 / span 7',
+      'span-8': 'span 8 / span 8',
+      'span-9': 'span 9 / span 9',
+      'span-10': 'span 10 / span 10',
+      'span-11': 'span 11 / span 11',
+      'span-12': 'span 12 / span 12',
+      'span-full': '1 / -1',
+    },
+    gridColumnEnd: {
+      auto: 'auto',
+      1: '1',
+      2: '2',
+      3: '3',
+      4: '4',
+      5: '5',
+      6: '6',
+      7: '7',
+      8: '8',
+      9: '9',
+      10: '10',
+      11: '11',
+      12: '12',
+      13: '13',
+    },
+    gridColumnStart: {
+      auto: 'auto',
+      1: '1',
+      2: '2',
+      3: '3',
+      4: '4',
+      5: '5',
+      6: '6',
+      7: '7',
+      8: '8',
+      9: '9',
+      10: '10',
+      11: '11',
+      12: '12',
+      13: '13',
+    },
+    gridRow: {
+      auto: 'auto',
+      'span-1': 'span 1 / span 1',
+      'span-2': 'span 2 / span 2',
+      'span-3': 'span 3 / span 3',
+      'span-4': 'span 4 / span 4',
+      'span-5': 'span 5 / span 5',
+      'span-6': 'span 6 / span 6',
+      'span-7': 'span 7 / span 7',
+      'span-8': 'span 8 / span 8',
+      'span-9': 'span 9 / span 9',
+      'span-10': 'span 10 / span 10',
+      'span-11': 'span 11 / span 11',
+      'span-12': 'span 12 / span 12',
+      'span-full': '1 / -1',
+    },
+    gridRowEnd: {
+      auto: 'auto',
+      1: '1',
+      2: '2',
+      3: '3',
+      4: '4',
+      5: '5',
+      6: '6',
+      7: '7',
+      8: '8',
+      9: '9',
+      10: '10',
+      11: '11',
+      12: '12',
+      13: '13',
+    },
+    gridRowStart: {
+      auto: 'auto',
+      1: '1',
+      2: '2',
+      3: '3',
+      4: '4',
+      5: '5',
+      6: '6',
+      7: '7',
+      8: '8',
+      9: '9',
+      10: '10',
+      11: '11',
+      12: '12',
+      13: '13',
+    },
+    gridTemplateColumns: {
+      none: 'none',
+      subgrid: 'subgrid',
+      1: 'repeat(1, minmax(0, 1fr))',
+      2: 'repeat(2, minmax(0, 1fr))',
+      3: 'repeat(3, minmax(0, 1fr))',
+      4: 'repeat(4, minmax(0, 1fr))',
+      5: 'repeat(5, minmax(0, 1fr))',
+      6: 'repeat(6, minmax(0, 1fr))',
+      7: 'repeat(7, minmax(0, 1fr))',
+      8: 'repeat(8, minmax(0, 1fr))',
+      9: 'repeat(9, minmax(0, 1fr))',
+      10: 'repeat(10, minmax(0, 1fr))',
+      11: 'repeat(11, minmax(0, 1fr))',
+      12: 'repeat(12, minmax(0, 1fr))',
+    },
+    gridTemplateRows: {
+      none: 'none',
+      subgrid: 'subgrid',
+      1: 'repeat(1, minmax(0, 1fr))',
+      2: 'repeat(2, minmax(0, 1fr))',
+      3: 'repeat(3, minmax(0, 1fr))',
+      4: 'repeat(4, minmax(0, 1fr))',
+      5: 'repeat(5, minmax(0, 1fr))',
+      6: 'repeat(6, minmax(0, 1fr))',
+      7: 'repeat(7, minmax(0, 1fr))',
+      8: 'repeat(8, minmax(0, 1fr))',
+      9: 'repeat(9, minmax(0, 1fr))',
+      10: 'repeat(10, minmax(0, 1fr))',
+      11: 'repeat(11, minmax(0, 1fr))',
+      12: 'repeat(12, minmax(0, 1fr))',
+    },
+    height: ({ theme }) => ({
+      auto: 'auto',
+      ...theme('spacing'),
+      '1/2': '50%',
+      '1/3': '33.333333%',
+      '2/3': '66.666667%',
+      '1/4': '25%',
+      '2/4': '50%',
+      '3/4': '75%',
+      '1/5': '20%',
+      '2/5': '40%',
+      '3/5': '60%',
+      '4/5': '80%',
+      '1/6': '16.666667%',
+      '2/6': '33.333333%',
+      '3/6': '50%',
+      '4/6': '66.666667%',
+      '5/6': '83.333333%',
+      full: '100%',
+      screen: '100vh',
+      svh: '100svh',
+      lvh: '100lvh',
+      dvh: '100dvh',
+      min: 'min-content',
+      max: 'max-content',
+      fit: 'fit-content',
+    }),
+    hueRotate: {
+      0: '0deg',
+      15: '15deg',
+      30: '30deg',
+      60: '60deg',
+      90: '90deg',
+      180: '180deg',
+    },
+    inset: ({ theme }) => ({
+      auto: 'auto',
+      ...theme('spacing'),
+      '1/2': '50%',
+      '1/3': '33.333333%',
+      '2/3': '66.666667%',
+      '1/4': '25%',
+      '2/4': '50%',
+      '3/4': '75%',
+      full: '100%',
+    }),
+    invert: {
+      0: '0',
+      DEFAULT: '100%',
+    },
+    keyframes: {
+      spin: {
+        to: {
+          transform: 'rotate(360deg)',
+        },
+      },
+      ping: {
+        '75%, 100%': {
+          transform: 'scale(2)',
+          opacity: '0',
+        },
+      },
+      pulse: {
+        '50%': {
+          opacity: '.5',
+        },
+      },
+      bounce: {
+        '0%, 100%': {
+          transform: 'translateY(-25%)',
+          animationTimingFunction: 'cubic-bezier(0.8,0,1,1)',
+        },
+        '50%': {
+          transform: 'none',
+          animationTimingFunction: 'cubic-bezier(0,0,0.2,1)',
+        },
+      },
+      wave: {
+        '0%, 100%': { color: 'rgb(156, 156, 156)' },
+        '50%': { color: 'rgb(100, 100, 100)' },
+      },
+      typing: {
+        '0%': { width: '0ch' },
+        '100%': { width: '21ch' },
+      },
+      blink: {
+        '0%, 100%': { borderColor: 'transparent' },
+        '50%': { borderColor: 'black' },
+      },
+    },
+    letterSpacing: {
+      tighter: '-0.05em',
+      tight: '-0.025em',
+      normal: '0em',
+      wide: '0.025em',
+      wider: '0.05em',
+      widest: '0.1em',
+    },
+    lineHeight: {
+      none: '1',
+      tight: '1.25',
+      snug: '1.375',
+      normal: '1.5',
+      relaxed: '1.625',
+      loose: '2',
+      3: '.75rem',
+      4: '1rem',
+      5: '1.25rem',
+      6: '1.5rem',
+      7: '1.75rem',
+      8: '2rem',
+      9: '2.25rem',
+      10: '2.5rem',
+    },
+    listStyleType: {
+      none: 'none',
+      disc: 'disc',
+      decimal: 'decimal',
+    },
+    listStyleImage: {
+      none: 'none',
+    },
+    margin: ({ theme }) => ({
+      auto: 'auto',
+      ...theme('spacing'),
+    }),
+    lineClamp: {
+      1: '1',
+      2: '2',
+      3: '3',
+      4: '4',
+      5: '5',
+      6: '6',
+    },
+    maxHeight: ({ theme }) => ({
+      ...theme('spacing'),
+      none: 'none',
+      full: '100%',
+      screen: '100vh',
+      svh: '100svh',
+      lvh: '100lvh',
+      dvh: '100dvh',
+      min: 'min-content',
+      max: 'max-content',
+      fit: 'fit-content',
+    }),
+    maxWidth: ({ theme, breakpoints }) => ({
+      ...theme('spacing'),
+      none: 'none',
+      xs: '20rem',
+      sm: '24rem',
+      md: '28rem',
+      lg: '32rem',
+      xl: '36rem',
+      '2xl': '42rem',
+      '3xl': '48rem',
+      '4xl': '56rem',
+      '5xl': '64rem',
+      '6xl': '72rem',
+      '7xl': '80rem',
+      full: '100%',
+      min: 'min-content',
+      max: 'max-content',
+      fit: 'fit-content',
+      prose: '65ch',
+      ...breakpoints(theme('screens')),
+    }),
+    minHeight: ({ theme }) => ({
+      ...theme('spacing'),
+      full: '100%',
+      screen: '100vh',
+      svh: '100svh',
+      lvh: '100lvh',
+      dvh: '100dvh',
+      min: 'min-content',
+      max: 'max-content',
+      fit: 'fit-content',
+    }),
+    minWidth: ({ theme }) => ({
+      ...theme('spacing'),
+      full: '100%',
+      min: 'min-content',
+      max: 'max-content',
+      fit: 'fit-content',
+    }),
+    objectPosition: {
+      bottom: 'bottom',
+      center: 'center',
+      left: 'left',
+      'left-bottom': 'left bottom',
+      'left-top': 'left top',
+      right: 'right',
+      'right-bottom': 'right bottom',
+      'right-top': 'right top',
+      top: 'top',
+    },
+    opacity: {
+      0: '0',
+      5: '0.05',
+      10: '0.1',
+      15: '0.15',
+      20: '0.2',
+      25: '0.25',
+      30: '0.3',
+      35: '0.35',
+      40: '0.4',
+      45: '0.45',
+      50: '0.5',
+      55: '0.55',
+      60: '0.6',
+      65: '0.65',
+      70: '0.7',
+      75: '0.75',
+      80: '0.8',
+      85: '0.85',
+      90: '0.9',
+      95: '0.95',
+      100: '1',
+    },
+    order: {
+      first: '-9999',
+      last: '9999',
+      none: '0',
+      1: '1',
+      2: '2',
+      3: '3',
+      4: '4',
+      5: '5',
+      6: '6',
+      7: '7',
+      8: '8',
+      9: '9',
+      10: '10',
+      11: '11',
+      12: '12',
+    },
+    outlineColor: ({ theme }) => theme('colors'),
+    outlineOffset: {
+      0: '0px',
+      1: '1px',
+      2: '2px',
+      4: '4px',
+      8: '8px',
+    },
+    outlineWidth: {
+      0: '0px',
+      1: '1px',
+      2: '2px',
+      4: '4px',
+      8: '8px',
+    },
+    padding: ({ theme }) => theme('spacing'),
+    placeholderColor: ({ theme }) => theme('colors'),
+    placeholderOpacity: ({ theme }) => theme('opacity'),
+    ringColor: ({ theme }) => ({
+      DEFAULT: theme('colors.blue.500', '#3b82f6'),
+      ...theme('colors'),
+    }),
+    ringOffsetColor: ({ theme }) => theme('colors'),
+    ringOffsetWidth: {
+      0: '0px',
+      1: '1px',
+      2: '2px',
+      4: '4px',
+      8: '8px',
+    },
+    ringOpacity: ({ theme }) => ({
+      DEFAULT: '0.5',
+      ...theme('opacity'),
+    }),
+    ringWidth: {
+      DEFAULT: '3px',
+      0: '0px',
+      1: '1px',
+      2: '2px',
+      4: '4px',
+      8: '8px',
+    },
+    rotate: {
+      0: '0deg',
+      1: '1deg',
+      2: '2deg',
+      3: '3deg',
+      6: '6deg',
+      12: '12deg',
+      45: '45deg',
+      90: '90deg',
+      180: '180deg',
+    },
+    saturate: {
+      0: '0',
+      50: '.5',
+      100: '1',
+      150: '1.5',
+      200: '2',
+    },
+    scale: {
+      0: '0',
+      50: '.5',
+      75: '.75',
+      90: '.9',
+      95: '.95',
+      100: '1',
+      105: '1.05',
+      110: '1.1',
+      125: '1.25',
+      150: '1.5',
+    },
+    screens: {
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+      landscape: { raw: '(orientation: landscape)' },
+    },
+    scrollMargin: ({ theme }) => ({
+      ...theme('spacing'),
+    }),
+    scrollPadding: ({ theme }) => theme('spacing'),
+    sepia: {
+      0: '0',
+      DEFAULT: '100%',
+    },
+    skew: {
+      0: '0deg',
+      1: '1deg',
+      2: '2deg',
+      3: '3deg',
+      6: '6deg',
+      12: '12deg',
+    },
+    space: ({ theme }) => ({
+      ...theme('spacing'),
+    }),
+    spacing: {
+      px: '1px',
+      0: '0px',
+      0.5: '0.125rem',
+      1: '0.25rem',
+      1.5: '0.375rem',
+      2: '0.5rem',
+      2.5: '0.625rem',
+      3: '0.75rem',
+      3.5: '0.875rem',
+      4: '1rem',
+      5: '1.25rem',
+      6: '1.5rem',
+      7: '1.75rem',
+      8: '2rem',
+      9: '2.25rem',
+      10: '2.5rem',
+      11: '2.75rem',
+      12: '3rem',
+      14: '3.5rem',
+      16: '4rem',
+      20: '5rem',
+      24: '6rem',
+      28: '7rem',
+      32: '8rem',
+      36: '9rem',
+      40: '10rem',
+      44: '11rem',
+      48: '12rem',
+      52: '13rem',
+      56: '14rem',
+      60: '15rem',
+      64: '16rem',
+      72: '18rem',
+      80: '20rem',
+      96: '24rem',
+    },
+    stroke: ({ theme }) => ({
+      none: 'none',
+      ...theme('colors'),
+    }),
+    strokeWidth: {
+      0: '0',
+      1: '1',
+      2: '2',
+    },
+    supports: {},
+    data: {},
+    textColor: ({ theme }) => theme('colors'),
+    textDecorationColor: ({ theme }) => theme('colors'),
+    textDecorationThickness: {
+      auto: 'auto',
+      'from-font': 'from-font',
+      0: '0px',
+      1: '1px',
+      2: '2px',
+      4: '4px',
+      8: '8px',
+    },
+    textIndent: ({ theme }) => ({
+      ...theme('spacing'),
+    }),
+    textOpacity: ({ theme }) => theme('opacity'),
+    textUnderlineOffset: {
+      auto: 'auto',
+      0: '0px',
+      1: '1px',
+      2: '2px',
+      4: '4px',
+      8: '8px',
+    },
+    transformOrigin: {
+      center: 'center',
+      top: 'top',
+      'top-right': 'top right',
+      right: 'right',
+      'bottom-right': 'bottom right',
+      bottom: 'bottom',
+      'bottom-left': 'bottom left',
+      left: 'left',
+      'top-left': 'top left',
+    },
+    transitionDelay: {
+      0: '0s',
+      75: '75ms',
+      100: '100ms',
+      150: '150ms',
+      200: '200ms',
+      300: '300ms',
+      500: '500ms',
+      700: '700ms',
+      1000: '1000ms',
+    },
+    transitionDuration: {
+      DEFAULT: '150ms',
+      0: '0s',
+      75: '75ms',
+      100: '100ms',
+      150: '150ms',
+      200: '200ms',
+      300: '300ms',
+      500: '500ms',
+      700: '700ms',
+      1000: '1000ms',
+    },
+    transitionProperty: {
+      none: 'none',
+      all: 'all',
+      DEFAULT:
+        'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter',
+      colors: 'color, background-color, border-color, text-decoration-color, fill, stroke',
+      opacity: 'opacity',
+      shadow: 'box-shadow',
+      transform: 'transform',
+    },
+    transitionTimingFunction: {
+      DEFAULT: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      linear: 'linear',
+      in: 'cubic-bezier(0.4, 0, 1, 1)',
+      out: 'cubic-bezier(0, 0, 0.2, 1)',
+      'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
+    },
+    translate: ({ theme }) => ({
+      ...theme('spacing'),
+      '1/2': '50%',
+      '1/3': '33.333333%',
+      '2/3': '66.666667%',
+      '1/4': '25%',
+      '2/4': '50%',
+      '3/4': '75%',
+      full: '100%',
+    }),
+    size: ({ theme }) => ({
+      auto: 'auto',
+      ...theme('spacing'),
+      '1/2': '50%',
+      '1/3': '33.333333%',
+      '2/3': '66.666667%',
+      '1/4': '25%',
+      '2/4': '50%',
+      '3/4': '75%',
+      '1/5': '20%',
+      '2/5': '40%',
+      '3/5': '60%',
+      '4/5': '80%',
+      '1/6': '16.666667%',
+      '2/6': '33.333333%',
+      '3/6': '50%',
+      '4/6': '66.666667%',
+      '5/6': '83.333333%',
+      '1/12': '8.333333%',
+      '2/12': '16.666667%',
+      '3/12': '25%',
+      '4/12': '33.333333%',
+      '5/12': '41.666667%',
+      '6/12': '50%',
+      '7/12': '58.333333%',
+      '8/12': '66.666667%',
+      '9/12': '75%',
+      '10/12': '83.333333%',
+      '11/12': '91.666667%',
+      full: '100%',
+      min: 'min-content',
+      max: 'max-content',
+      fit: 'fit-content',
+    }),
+    width: ({ theme }) => ({
+      auto: 'auto',
+      ...theme('spacing'),
+      '1/2': '50%',
+      '1/3': '33.333333%',
+      '2/3': '66.666667%',
+      '1/4': '25%',
+      '2/4': '50%',
+      '3/4': '75%',
+      '1/5': '20%',
+      '2/5': '40%',
+      '3/5': '60%',
+      '4/5': '80%',
+      '1/6': '16.666667%',
+      '2/6': '33.333333%',
+      '3/6': '50%',
+      '4/6': '66.666667%',
+      '5/6': '83.333333%',
+      '1/12': '8.333333%',
+      '2/12': '16.666667%',
+      '3/12': '25%',
+      '4/12': '33.333333%',
+      '5/12': '41.666667%',
+      '6/12': '50%',
+      '7/12': '58.333333%',
+      '8/12': '66.666667%',
+      '9/12': '75%',
+      '10/12': '83.333333%',
+      '11/12': '91.666667%',
+      full: '100%',
+      screen: '100vw',
+      svw: '100svw',
+      lvw: '100lvw',
+      dvw: '100dvw',
+      min: 'min-content',
+      max: 'max-content',
+      fit: 'fit-content',
+    }),
+    willChange: {
+      auto: 'auto',
+      scroll: 'scroll-position',
+      contents: 'contents',
+      transform: 'transform',
+    },
+    zIndex: {
+      auto: 'auto',
+      0: '0',
+      10: '10',
+      20: '20',
+      30: '30',
+      40: '40',
+      50: '50',
+    },
+    extend: {
+      keyframes: {
+        wave: {
+          '0%, 100%': { color: 'rgb(156, 156, 156)' },
+          '50%': { color: 'rgb(100, 100, 100)' },
+        },
+        typing: {
+          '0%': { width: '0ch' },
+          '100%': { width: '21ch' },
+        },
+        blink: {
+          '0%, 100%': { borderColor: 'transparent' },
+          '50%': { borderColor: 'black' },
+        },
+      },
+      animation: {
+        wave: 'wave 3s ease-in-out infinite',
+        typing: 'typing 2s steps(21) forwards',
+        blink: 'blink 0.5s step-end infinite',
+        'typing-blink': 'typing 2s steps(21) forwards, blink 0.5s step-end infinite',
+      },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            '.typewriter-cursor': {
+              // Additional Tailwind classes if needed
+            },
+          },
+        },
+      }),
+    },
+  },
+  plugins: [],
+}
+
+================================================
+File: tsconfig.app.json
+================================================
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src"]
+}
+
+
+================================================
+File: tsconfig.json
+================================================
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
+
+
+================================================
+File: tsconfig.node.json
+================================================
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["vite.config.ts"]
+}
+
+
+================================================
+File: vite.config.ts
+================================================
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+
+
+================================================
+File: src/App.tsx
+================================================
+// App.tsx
+
+import { useState, useEffect } from 'react';
+import { useTrail, animated } from '@react-spring/web';
+import './index.css';
+
+import SVGBackground from './components/SVGBackground';
+// Direct imports instead of lazy loading
+import Home from './pages/Home';
+import Projects from './pages/Projects';
+import About from './pages/About';
+import Contact from './pages/Contact';
+
+function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [currentSection, setCurrentSection] = useState('home');
+
+  useEffect(() => {
+    const sections = ['home', 'projects', 'about', 'contact'];
+    const observers = sections.map(section => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              setCurrentSection(section);
+            }
+          });
+        },
+        { threshold: 0.2,
+          rootMargin: '0px 0px -20% 0px'
+         }
+      );
+
+      const element = document.querySelector(`#${section}`);
+      if (element) observer.observe(element);
+      return observer;
+    });
+
+    return () => {
+      observers.forEach(observer => observer.disconnect());
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (menuOpen) {
+        setMenuOpen(false);
+      }
+    };
+
+    const handleTouch = () => {
+      if (menuOpen) {
+        setMenuOpen(false);
+      }
+    };
+
+    const handleWheel = () => {
+      if (menuOpen) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('touchmove', handleTouch, { passive: true });
+    window.addEventListener('wheel', handleWheel, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('touchmove', handleTouch);
+      window.removeEventListener('wheel', handleWheel);
+    };
+  }, [menuOpen]);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setMenuOpen(false);
+    const element = document.querySelector(href);
+    element?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const items = [
+    {
+      href: '#home',
+      label: 'Home',
+      bg: 'bg-red-500/20',
+      border: 'border-red-500/30',
+      text: 'text-red-300',
+      hover: 'hover:text-red-200',
+    },
+    {
+      href: '#projects',
+      label: 'Projects',
+      bg: 'bg-yellow-500/20',
+      border: 'border-yellow-500/30',
+      text: 'text-yellow-300',
+      hover: 'hover:text-yellow-200',
+    },
+    {
+      href: '#about',
+      label: 'About',
+      bg: 'bg-green-500/20',
+      border: 'border-green-500/30',
+      text: 'text-green-300',
+      hover: 'hover:text-green-200',
+    },
+    {
+      href: '#contact',
+      label: 'Contact',
+      bg: 'bg-blue-500/20',
+      border: 'border-blue-500/30',
+      text: 'text-blue-300',
+      hover: 'hover:text-blue-200',
+    },
+  ];
+
+  const trail = useTrail(items.length, {
+    transform: menuOpen ? 'translateY(0)' : 'translateY(-10px)',
+    opacity: menuOpen ? 1 : 0,
+    config: { duration: 100, tension: 200, friction: 20 },
+    delay: menuOpen ? 100 : 0,
+  });
+
+  const getCurrentColors = () => {
+    const colorMap = {
+      home: 'bg-red-500/20 border-red-500/30',
+      projects: 'bg-yellow-500/20 border-yellow-500/30',
+      about: 'bg-green-500/20 border-green-500/30',
+      contact: 'bg-blue-500/20 border-blue-500/30'
+    };
+    return colorMap[currentSection as keyof typeof colorMap] || colorMap.home;
+  };
+
+  return (
+    <div className="relative min-h-screen w-full">
+      <div className="fixed inset-0 w-full h-full">
+        <SVGBackground />
+      </div>
+
+      <nav className="fixed top-4 left-4 z-50">
+        <button
+          onClick={toggleMenu}
+          className={`backdrop-blur-md border p-2 rounded-md shadow-lg hover:bg-white/30 transition-all duration-300 ${getCurrentColors()}`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-8">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
+        <div className="mt-2 p-4">
+          <ul className="space-y-2">
+            {trail.map((style, index) => (
+              <animated.li key={index} style={style}>
+                <a
+                  href={items[index].href}
+                  onClick={(e) => handleClick(e, items[index].href)}
+                  className={`
+                    block
+                    ${items[index].bg}
+                    backdrop-blur-sm
+                    border
+                    ${items[index].border}
+                    p-2
+                    rounded-md
+                    shadow-lg
+                    ${items[index].text}
+                    ${items[index].hover}
+                    transition-all
+                    duration-300
+                    text-center
+                  `}
+                >
+                  {items[index].label}
+                </a>
+              </animated.li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+
+      <main className="relative z-10">
+        <Home />
+        <Projects />
+        <About />
+        <Contact />
+      </main>
+    </div>
+  );
+}
+
+export default App;
+
+
+================================================
+File: src/index.css
+================================================
+/* index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans;
+  margin: 0;
+  min-height: 100vh;
+  color: rgb(156, 156, 156);
+}
+
+html, #root {
+  height: 100%;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth; /* Enable smooth scrolling */
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+#root {
+  position: relative;
+  min-height: 100vh;
+  background-color: #000000;
+  overflow-x: hidden; /* Change to only hide horizontal overflow */
+  z-index: 1; /* Ensure root has a stacking context */
+}
+
+.background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; /* Place background behind all content */
+  background-color: #000000;
+  min-height: 100vh; /* Ensure minimum height */
+  overflow: hidden;
+}
+
+.glow-effect {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); /* Adjusted glow effect */
+}
+
+.fade-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-position: center center;
+  background-size: 800px 800px, cover;
+  background-repeat: repeat, no-repeat;
+  transition: opacity 1s ease-in-out;
+  z-index: 0;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #303030, #464646, #bebebe, #464646, #303030);
+  background-size: 200% 100%;  /* Changed from 500% to 200% to make the wave smaller */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: wave 5s linear infinite;
+  white-space: pre-wrap;
+  text-align: center;
+  max-width: 90vw;
+  overflow: visible;
+  min-height: fit-content;
+  text-align: left; /* Ensure text alignment is set to left */
+}
+
+@keyframes wave {
+  0% {
+    background-position: 150% 50%;  /* Changed from 100% to 150% */
+  }
+  100% {
+    background-position: -50% 50%;  /* Changed from 0% to -50% */
+  }
+}
+
+.arrow-container {
+  position: absolute; /* Change to absolute to keep it within the parent container */
+  bottom: 0; /* Set to 0 to ensure it goes all the way to the bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 0; /* Ensure no margin at the bottom */
+  padding-bottom: 0; /* Ensure no padding at the bottom */
+  z-index: 10;
+}
+
+.arrow {
+  width: 240px;
+  height: 240px;
+  stroke: white;
+  transform: scale(1, 1); /* Changed from scale(2, 2) since we're using larger base dimensions */
+  transform-origin: center;
+  filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 4px rgba(255, 255, 255, 0.8))
+      drop-shadow(0 0 8px rgba(255, 255, 255, 0.6))
+      drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
+  }
+  100% {
+    filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+  }
+}
+
+.pulsing-frame {
+  position: relative;
+}
+
+.pulsing-frame::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  bottom: -3px;
+  left: -3px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  animation: framePulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes framePulse {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.svg-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@supports (-moz-appearance:none) {
+  .svg-background {
+    position: fixed;
+    min-height: 100vh;
+    height: 100%;
+  }
+}
+
+.pattern-rect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pattern-rect.fade-in {
+  opacity: 1;
+}
+
+.pattern-rect.fade-out {
+  opacity: 0;
+}
+
+.wave-effect {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 25%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.2) 75%);
+  background-size: 200% 100%;
+  animation: wave-animation 2s linear infinite;
+}
+
+@keyframes wave-animation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.download-button-border {
+  position: relative;
+  border-radius: 0.375rem; /* rounded-md */
+}
+
+.download-button-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  bottom: -2px;
+  left: -2px;
+  background: linear-gradient(90deg, #3b82f6, #10b981, #8b5cf6);
+  border-radius: 0.5rem;
+  background-size: 200% 100%;
+  animation: borderMove 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes borderMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.base-tile {
+  @apply bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-lg shadow-lg hover:bg-white/10 transition-all duration-300 w-full max-w-[800px];
+}
+
+
+================================================
+File: src/main.tsx
+================================================
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+
+================================================
+File: src/vite-env.d.ts
+================================================
+/// <reference types="vite/client" />
+
+
+================================================
+File: src/components/ProjectTile.tsx
+================================================
+import { memo, useState, useRef, useEffect } from 'react';
+
+interface ProjectTileProps {
+  title: string;
+  description: string;
+  deploymentUrl?: string; // Changed from link to deploymentUrl and made optional
+  github?: string; // Add optional GitHub link
+  labels: string[];
+  image?: string; // Optional image URL
+  onImageClick: (imageUrl: string) => void;
+  completion: number; // Add completion percentage
+}
+
+const getLabelColors = (label: string) => {
+  const colorMap: { [key: string]: { bg: string; text: string; border: string } } = {
+    'React': { bg: 'bg-cyan-500/20', text: 'text-cyan-300', border: 'border-cyan-500/30' },
+    'JavaScript': { bg: 'bg-yellow-500/20', text: 'text-yellow-300', border: 'border-yellow-500/30' },
+    'TypeScript': { bg: 'bg-blue-500/20', text: 'text-blue-300', border: 'border-blue-500/30' },
+    'Rust': { bg: 'bg-orange-500/20', text: 'text-orange-300', border: 'border-orange-500/30' },
+    'Python': { bg: 'bg-gradient-to-r from-blue-500/20 to-yellow-500/20', text: 'text-yellow-300', border: 'border-blue-500/30' },
+    'Tailwind': { bg: 'bg-cyan-500/20', text: 'text-cyan-300', border: 'border-cyan-500/30' },
+    'Node.js': { bg: 'bg-emerald-500/20', text: 'text-emerald-300', border: 'border-emerald-500/30' },
+    'C#': { bg: 'bg-fuchsia-500/20', text: 'text-fuchsia-300', border: 'border-fuchsia-500/30' },
+    'ASP.NET': { bg: 'bg-purple-500/20', text: 'text-purple-300', border: 'border-purple-500/30' },
+    'Postgres': { bg: 'bg-blue-500/20', text: 'text-blue-300', border: 'border-blue-500/30' },
+    'SQL': { bg: 'bg-green-500/20', text: 'text-green-300', border: 'border-green-500/30' },
+    'Flutter': { bg: 'bg-sky-500/20', text: 'text-sky-300', border: 'border-sky-500/30' },
+    'Dart': { bg: 'bg-teal-500/20', text: 'text-teal-300', border: 'border-teal-500/30' },
+    'Tauri': { bg: 'bg-slate-500/20', text: 'text-slate-300', border: 'border-slate-500/30' },
+    'Embedded': { bg: 'bg-lime-500/20', text: 'text-lime-300', border: 'border-lime-500/30' },
+    'Ruby': { bg: 'bg-red-600/20', text: 'text-red-300', border: 'border-red-500/30' },
+    'Ruby on Rails': { bg: 'bg-gradient-to-r from-red-500/20 to-white/20', text: 'text-red-300', border: 'border-red-600/30' },
+  };
+
+  return colorMap[label] || { bg: 'bg-indigo-500/20', text: 'text-indigo-300', border: 'border-indigo-500/30' };
+};
+
+const ProjectTile = memo(({ title, description, deploymentUrl, github, labels, image, onImageClick, completion }: ProjectTileProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [shouldShowMore, setShouldShowMore] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkHeight = () => {
+      if (textRef.current && containerRef.current) {
+        const containerHeight = containerRef.current.offsetHeight;
+        const textHeight = textRef.current.scrollHeight;
+
+        // If text height is greater than 4 lines (considering line height)
+        setShouldShowMore(textHeight > containerHeight);
+      }
+    };
+
+    checkHeight();
+    // Recheck on window resize
+    window.addEventListener('resize', checkHeight);
+    return () => window.removeEventListener('resize', checkHeight);
+  }, [description]);
+
+  const progressColor = completion === 100 ? 'bg-green-500/60' : 'bg-amber-400/60';
+  const progressBorderColor = completion === 100 ? 'border-green-500/90' : 'border-amber-400/90';
+
+  return (
+    <div className="base-tile flex flex-col h-full">
+      {image ? (
+        <div className="mb-4 overflow-hidden rounded-lg aspect-video">
+          <img
+            src={image}
+            alt={`${title} preview`}
+            className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500 cursor-pointer"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+            width="800"
+            height="450"
+            onClick={() => onImageClick(image)}
+            style={{
+              imageRendering: '-webkit-optimize-contrast',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+            }}
+          />
+        </div>
+      ) : null}
+      <h3 className="text-2xl font-semibold mb-4">{title}</h3>
+      <div className={`relative w-full h-4 mb-4 bg-white/10 rounded-full overflow-hidden border-2 ${progressBorderColor}`}>
+        <div className={`absolute top-0 left-0 h-full ${progressColor}`} style={{ width: `${completion}%` }}>
+          {completion < 100 && <div className="wave-effect h-full"></div>}
+        </div>
+        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center text-sm text-white">
+          {completion < 100 ? 'In Progress' : 'Completed'}
+        </div>
+        <div className="absolute top-0 left-1/4 w-0.5 h-full bg-white/20"></div>
+        <div className="absolute top-0 left-1/2 w-0.5 h-full bg-white/20"></div>
+        <div className="absolute top-0 left-3/4 w-0.5 h-full bg-white/20"></div>
+      </div>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {labels.map((label, index) => {
+          const colors = getLabelColors(label);
+          return (
+            <span
+              key={index}
+              className={`px-2 py-1 text-sm rounded-full ${colors.bg} ${colors.text} border ${colors.border}`}
+            >
+              {label}
+            </span>
+          );
+        })}
+      </div>
+
+      <div className="relative flex-grow">
+        <div ref={containerRef} className={`${isExpanded ? '' : 'max-h-[6em] overflow-hidden'}`}>
+          <p ref={textRef} className="mb-4">
+            {description}
+          </p>
+        </div>
+        {shouldShowMore && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-indigo-400 hover:text-indigo-300 transition-colors text-sm"
+          >
+            {isExpanded ? 'See less' : 'See more'}
+          </button>
+        )}
+      </div>
+
+      <div className="flex justify-between items-center mt-4">
+        <div>
+          {deploymentUrl && (
+            <button
+              onClick={() => window.open(deploymentUrl, '_blank')}
+              className="px-4 py-2 bg-blue-500/20 border border-blue-500/30 rounded-md text-blue-300 hover:bg-blue-500/30 transition-all duration-300 flex items-center gap-2"
+            >
+<svg
+  className="w-5 h-5 animate-[spin_3s_linear_infinite]"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  strokeWidth="2"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+>
+
+  <circle cx="12" cy="12" r="10" />
+
+  <path d="M2 12h20" />
+
+
+  <path d="
+    M12 2
+    a15.3 15.3 0 0 1 4 10
+    a15.3 15.3 0 0 1 -4 10
+    a15.3 15.3 0 0 1 -4 -10
+    a15.3 15.3 0 0 1 4 -10
+    z
+  "/>
+</svg>
+
+              Live Deployment
+            </button>
+          )}
+        </div>
+        {github && (
+          <a href={github} className="text-gray-400 hover:text-gray-300 transition-colors ml-auto" aria-label="View on GitHub">
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              stroke="currentColor"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+            </svg>
+          </a>
+        )}
+      </div>
+    </div>
+  );
+});
+
+ProjectTile.displayName = 'ProjectTile';
+
+export default ProjectTile;
+
+
+================================================
+File: src/components/SVGBackground.tsx
+================================================
+import { useState, useEffect } from 'react';
+import '../index.css';
+
+const COLS = 25;
+const ROWS = 25;
+const TILE_SIZE = 800;
+const CELL_SIZE = TILE_SIZE / COLS;
+const DIAMOND_SIZE = CELL_SIZE / 15;
+
+export default function SVGBackground() {
+  const [patterns, setPatterns] = useState({
+    current: createRandomPattern('pattern1'),
+    next: createRandomPattern('pattern2'),
+  });
+  const [activePattern, setActivePattern] = useState('current'); // Toggle active pattern for transition
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const randomizePattern = () => {
+    if (isTransitioning) return;
+
+    setIsTransitioning(true);
+
+    setTimeout(() => {
+      setActivePattern(activePattern === 'current' ? 'next' : 'current'); // Toggle active pattern
+      setPatterns(prev => ({
+        ...prev,
+        [activePattern === 'current' ? 'next' : 'current']: createRandomPattern(`pattern${Math.random()}`),
+      }));
+
+      setIsTransitioning(false);
+    }, 2000); // Match transition duration
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(randomizePattern, 5000); // Update pattern every 5 seconds
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [activePattern]);
+
+  return (
+    <svg
+      className="svg-background"
+      viewBox="0 0 800 800"
+      preserveAspectRatio="xMidYMid slice"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        {patterns.current}
+        {patterns.next}
+      </defs>
+      <rect
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        fill={`url(#${patterns.current.props.id})`}
+        className={`pattern-rect ${
+          activePattern === 'current' ? 'fade-in' : 'fade-out'
+        }`}
+      />
+      <rect
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        fill={`url(#${patterns.next.props.id})`}
+        className={`pattern-rect ${
+          activePattern === 'next' ? 'fade-in' : 'fade-out'
+        }`}
+      />
+    </svg>
+  );
+}
+
+function createRandomPattern(patternId: string): JSX.Element {
+  const diamonds: JSX.Element[] = [];
+
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
+      const cx = col * CELL_SIZE + CELL_SIZE / 2;
+      const cy = row * CELL_SIZE + CELL_SIZE / 2;
+      const isFilled = Math.random() < 0.5;
+      const color = 'gray';
+
+      const diamondPath = `
+        M ${cx} ${cy - DIAMOND_SIZE}
+        L ${cx + DIAMOND_SIZE} ${cy}
+        L ${cx} ${cy + DIAMOND_SIZE}
+        L ${cx - DIAMOND_SIZE} ${cy}
+        Z
+      `;
+
+      diamonds.push(
+        <path
+          key={`r${row}c${col}`}
+          d={diamondPath}
+          fill={isFilled ? color : 'none'}
+          stroke={isFilled ? 'none' : color}
+          strokeWidth={0.4}
+        />
+      );
+    }
+  }
+
+  return (
+    <pattern
+      key={patternId}
+      id={patternId}
+      x="0"
+      y="0"
+      width={TILE_SIZE}
+      height={TILE_SIZE}
+      patternUnits="userSpaceOnUse"
+    >
+      <g>{diamonds}</g>
+    </pattern>
+  );
+}
+
+
+================================================
+File: src/components/Tile.tsx
+================================================
+import React from 'react';
+
+interface TextTileProps {
+  title: string;
+  description: React.ReactNode;  // Change from string to ReactNode
+  downloadUrl?: string;  // Optional download URL
+  downloadLabel?: string;  // Optional download button label
+  icon?: React.ReactNode;  // Add this line
+}
+
+interface PictureTileProps {
+  title: string;
+  description: string;
+  image: string;
+}
+
+interface TraitTileProps {
+  text: string;
+  icon: React.ReactNode;
+  accentColor: string;  // For text and icon color (e.g., 'cyan', 'emerald', etc.)
+  backgroundColor?: string; // Optional background color override
+  textSize?: 'sm' | 'base' | 'lg';  // Configurable text size
+}
+
+const TextTile: React.FC<TextTileProps> = ({ title, description, downloadUrl, downloadLabel, icon }) => {
+  return (
+    <div className="base-tile">
+      {icon && <div className="flex justify-center mb-4 text-white">{icon}</div>}
+      <h1 className="text-4xl font-bold mb-4">{title}</h1>
+      <p className="text-lg">{description}</p>
+      {downloadUrl && (
+        <div className="mt-6">
+          <a
+            href={downloadUrl}
+            download
+            className="download-button-border inline-flex items-center mt-4 px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            {downloadLabel || 'Download'}
+          </a>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const PictureTile: React.FC<PictureTileProps> = ({ title, description, image }) => {
+  return (
+    <div className="base-tile">
+      <div className="mb-4 overflow-hidden rounded-lg">
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-auto object-contain"
+        />
+      </div>
+      <h3 className="text-2xl font-semibold mb-4">{title}</h3>
+      <p className="text-lg">{description}</p>
+    </div>
+  );
+};
+
+const TraitTile: React.FC<TraitTileProps> = ({
+  text,
+  icon,
+  accentColor,
+  textSize = 'sm'
+}) => {
+  const getColorClasses = (color: string) => {
+    const colorMap: { [key: string]: { bg: string; text: string; border: string; hover: string } } = {
+      'emerald': {
+        bg: 'bg-emerald-500/20',
+        text: 'text-emerald-300',
+        border: 'border-emerald-500/30',
+        hover: 'hover:bg-emerald-500/30'
+      },
+      'blue': {
+        bg: 'bg-blue-500/20',
+        text: 'text-blue-300',
+        border: 'border-blue-500/30',
+        hover: 'hover:bg-blue-500/30'
+      },
+      'purple': {
+        bg: 'bg-purple-500/20',
+        text: 'text-purple-300',
+        border: 'border-purple-500/30',
+        hover: 'hover:bg-purple-500/30'
+      }
+    };
+
+    return colorMap[color] || colorMap['emerald'];
+  };
+
+  const colors = getColorClasses(accentColor);
+  const textSizeClass = `text-${textSize}`;
+
+  return (
+    <div className={`
+      inline-flex items-center gap-2
+      px-3 py-2
+      rounded-full
+      border
+      transition-colors duration-300
+      w-fit
+      ${colors.bg}
+      ${colors.border}
+      ${colors.hover}
+    `}>
+      <span className={`${colors.text} flex-shrink-0`}>
+        {icon}
+      </span>
+      <span className={`${colors.text} ${textSizeClass} font-medium whitespace-nowrap`}>
+        {text}
+      </span>
+    </div>
+  );
+};
+
+export { TextTile, PictureTile, TraitTile };
+
+
+================================================
+File: src/pages/About.tsx
+================================================
+import React from 'react';
+import { TextTile, PictureTile, TraitTile } from '../components/Tile';
+
+const About: React.FC = () => {
+  return (
+    <div id="about" className="flex flex-col items-center">
+      <div className="flex justify-center w-full mb-20">
+        <div className="w-[200px] h-[2px] bg-gray-700 rounded-full"></div>
+      </div>
+      <img
+        src="/profile.jpg"
+        alt="Portrait"
+        className="w-64 h-64 rounded-full object-cover drop-shadow-lg mb-8 glow-effect"
+      />
+      <div className="max-w-[1600px] w-full mx-auto px-4">
+        <div className="grid grid-cols-1 landscape:grid-cols-2 landscape:justify-center gap-8 items-start">
+          <div className="space-y-8 landscape:flex landscape:flex-col max-w-full">
+            <div className="landscape:flex-grow max-w-full">
+              <TextTile
+                title="About Me"
+                description={
+                  <>
+                    <div className="flex flex-wrap gap-4 mb-6">
+                      <TraitTile
+                        text="Productive"
+                        accentColor="emerald"
+                        icon={
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" />
+                          </svg>
+                        }
+                      />
+                      <TraitTile
+                        text="Self-Learner"
+                        accentColor="blue"
+                        icon={
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                          </svg>
+                        }
+                      />
+                      <TraitTile
+                        text="Problem Solver"
+                        accentColor="purple"
+                        icon={
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 0 1-.657.643 48.39 48.39 0 0 1-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 0 1-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 0 0-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 0 1-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 0 0 .657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 0 1-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.4.604-.4.959v0c0 .333.277.599.61.58a48.1 48.1 0 0 0 5.427-.63 48.05 48.05 0 0 0 .582-4.717.532.532 0 0 0-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.96.401v0a.656.656 0 0 0 .658-.663 48.422 48.422 0 0 0-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 0 1-.61-.58v0Z" />
+                          </svg>
+                        }
+                      />
+                    </div>
+                    Hello! I'm a software developer based in Weslaco, Texas, currently pursuing a Bachelor’s degree in Computer Science at the University of Texas Rio Grande Valley (UTRGV). My journey into technology began at a young age, driven by a passion for problem-solving and creativity. My first experiences with programming involved modding games and building simple websites, sparking a lifelong interest in tech.
+
+                    Before transferring to UTRGV, I earned an Associate’s degree in Computer Science from South Texas College. During this time, I also gained hands-on experience in IT, working for approximately two years and deepening my understanding of computer hardware and system management.
+
+                    At UTRGV, I’m an active member of the Rocket Launchers Club, where I collaborate with like-minded individuals on exciting aerospace projects. Additionally, I frequently attend hackathons, where I enjoy tackling challenges, learning from peers, and networking with other passionate developers. I value building strong connections within the tech community and sharing knowledge through collaboration and teamwork.
+
+                    I’m passionate about continuous learning and innovation. I love exploring emerging technologies, researching their applications, and integrating them into my projects. Whether it's developing software, solving technical challenges, or diving into new frameworks, I’m always eager to expand my skills and take on new challenges.
+
+                    Feel free to download my resume and explore the gallery below to see highlights from my experiences.
+                  </>
+                }
+                downloadUrl="/resume.pdf"
+                downloadLabel="Download Resume"
+              />
+            </div>
+          </div>
+          <div className="space-y-8 landscape:flex landscape:flex-col">
+            <div className="landscape:flex-shrink-0">
+              <PictureTile
+                title="Frontera Hacks 2024"
+                description=" "
+                image="/fronterahacks2024.JPG"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default About;
+
+
+================================================
+File: src/pages/Contact.tsx
+================================================
+import React, { useRef, FormEvent, useState, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
+
+declare global {
+  interface Window {
+    grecaptcha: any;
+    onRecaptchaLoad?: () => void;
+  }
+}
+
+const Contact: React.FC = () => {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<boolean>(false);
+  const [isRecaptchaLoaded, setIsRecaptchaLoaded] = useState(false);
+  const recaptchaRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    // Load reCAPTCHA script
+    window.onRecaptchaLoad = () => {
+      setIsRecaptchaLoaded(true);
+    };
+
+    if (!document.querySelector('script[src*="recaptcha"]')) {
+      const script = document.createElement('script');
+      script.src = `https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+
+    return () => {
+      // Cleanup
+      if (recaptchaRef.current !== null) {
+        window.grecaptcha?.reset(recaptchaRef.current);
+      }
+      window.onRecaptchaLoad = undefined;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isRecaptchaLoaded && window.grecaptcha && !recaptchaRef.current) {
+      recaptchaRef.current = window.grecaptcha.render('recaptcha-container', {
+        sitekey: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+      });
+    }
+  }, [isRecaptchaLoaded]);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess(false);
+
+    try {
+      const captchaResponse = window.grecaptcha?.getResponse();
+      if (!captchaResponse) {
+        setError('Please complete the reCAPTCHA verification');
+        return;
+      }
+
+      const form = formRef.current!;
+      const formData = new FormData(form);
+      const templateParams = {
+        to_name: "Luis",
+        from_name: formData.get('name') as string,
+        from_email: formData.get('email') as string,
+        message: formData.get('message') as string,
+      };
+
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      setSuccess(true);
+      form.reset();
+      window.grecaptcha.reset();
+
+      setTimeout(() => {
+        setSuccess(false);
+      }, 5000);
+
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+      console.error(err);
+    }
+  };
+
+  return (
+    <div id="contact" className="flex flex-col justify-between mt-20">
+      <div className="flex justify-center w-full mb-20">
+        <div className="w-[200px] h-[2px] bg-gray-700 rounded-full"></div>
+      </div>
+      <div className="flex-grow flex flex-col items-center justify-center">
+        <div className="max-w-[800px] w-full mx-auto px-4 mb-20">
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-lg shadow-lg hover:bg-white/10 transition-all duration-300">
+            <h1 className="text-4xl font-bold mb-4">Contact Me</h1>
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-lg mb-2" htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  required
+                  className="w-full p-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-gray-400"
+                  placeholder="Your Name"
+                />
+              </div>
+              <div>
+                <label className="block text-lg mb-2" htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  className="w-full p-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-gray-400"
+                  placeholder="Your Email"
+                />
+              </div>
+              <div>
+                <label className="block text-lg mb-2" htmlFor="message">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  required
+                  className="w-full p-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-gray-400"
+                  placeholder="Your Message"
+                  rows={4}
+                ></textarea>
+              </div>
+              <div className="flex flex-col items-center gap-4">
+                <div id="recaptcha-container"></div>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
+                {success && (
+                  <div className="w-full p-3 bg-green-500/20 border border-green-500/30 rounded-md text-green-300 text-center">
+                    Message sent successfully!
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  className="w-full p-2 bg-blue-500/20 border border-blue-500/30 rounded-md text-blue-300 hover:bg-blue-500/30 transition-all duration-300"
+                >
+                  Send Message
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <footer className="w-full bg-white/5 backdrop-blur-sm text-white/80 py-4 text-center border-t border-white/10">
+        <div className="flex justify-center items-start space-x-16 mb-4">
+          <div className="text-left">
+            <h3 className="text-lg font-semibold mb-2">Contact Me</h3>
+            <p>Email: Luis_Mtz907@live.com</p>
+            <p>Phone: 956-376-1227</p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Socials</h3>
+            <div className="flex space-x-4">
+              <a href="https://github.com/Lmx154" target="_blank" rel="noopener noreferrer">
+                <img src="/github.svg" alt="GitHub" className="w-6 h-6 opacity-80 hover:opacity-100 transition-opacity" />
+              </a>
+              <a href="https://www.linkedin.com/in/luismtz-2b54f/" target="_blank" rel="noopener noreferrer">
+                <img src="/linkedin.svg" alt="LinkedIn" className="w-6 h-6 opacity-80 hover:opacity-100 transition-opacity" />
+              </a>
+              <a href="https://x.com/Lmx154" target="_blank" rel="noopener noreferrer">
+                <img src="/x.svg" alt="X (Twitter)" className="w-6 h-6 opacity-80 hover:opacity-100 transition-opacity" />
+              </a>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-center w-full my-4">
+          <div className="w-[200px] h-[2px] bg-gray-700 rounded-full"></div>
+        </div>
+        <p>&copy; 2024 Luis Martinez All rights reserved.</p>
+      </footer>
+    </div>
+  );
+};
+
+export default Contact;
+
+
+================================================
+File: src/pages/Home.tsx
+================================================
+import { Typewriter } from 'react-simple-typewriter';
+import '../index.css'; // Import the global CSS file
+
+const Home = () => {
+  return (
+    <div id="home" className="relative flex flex-col items-center justify-center min-h-screen">
+      <div className="w-full max-w-4xl px-4">
+        <h2 className="text-1xl md:text-1xl lg:text-2xl font-normal tracking-normal md:tracking-normal lg:tracking-normal text-left text-white">
+          Hi! 👋, My name is
+        </h2>
+        <h1 className="text-6xl md:text-6xl lg:text-8xl font-normal tracking-normal md:tracking-normal lg:tracking-normal gradient-text pb-4 leading-normal text-left">
+          Luis Martinez
+        </h1>
+        <div className="relative h-[200px]">
+          <div className="absolute w-full">
+            <h1 className="text-2xl md:text-2xl lg:text-4xl font-normal tracking-normal md:tracking-normal lg:tracking-normal text-white pb-4 leading-normal text-left">
+              <Typewriter
+                words={[
+                  'Full Stack Developer',
+                  'Embedded Developer',
+                  'Student',
+                  'Tech Enthusiast',
+                ]}
+                loop={0}
+                cursor
+                cursorStyle="|"
+                typeSpeed={50}
+                deleteSpeed={20}
+                delaySpeed={2000} // Increased delay between messages
+              />
+            </h1>
+          </div>
+        </div>
+      </div>
+      <div className="relative arrow-container mb-0 pb-0">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          version="1.1"
+          xmlnsXlink="http://www.w3.org/1999/xlink"
+          viewBox="0 0 800 800"
+          className="arrow"
+        >
+          <g
+            strokeWidth="9"
+            stroke="hsl(0, 0%, 100%)"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            transform="rotate(45, 400, 400)"
+          >
+            <line
+              x1="372.5"
+              y1="372.5"
+              x2="427.5"
+              y2="427.5"
+              markerEnd="url(#SvgjsMarker2406)"
+            />
+          </g>
+          <defs>
+            <marker
+              markerWidth="6.5"
+              markerHeight="6.5"
+              refX="3.25"
+              refY="3.25"
+              viewBox="0 0 6.5 6.5"
+              orient="auto"
+              id="SvgjsMarker2406"
+            >
+              <polygon
+                points="0,6.5 3.25,3.25 0,0 6.5,3.25"
+                fill="hsl(0, 0%, 100%)"
+              />
+            </marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  );
+};
+
+export default Home;
+
+
+================================================
+File: src/pages/Projects.tsx
+================================================
+import { useState } from 'react';
+import ProjectTile from '../components/ProjectTile';
+
+const Projects = () => {
+  const [modalImage, setModalImage] = useState<string | null>(null);
+
+  const openModal = (imageUrl: string) => setModalImage(imageUrl);
+  const closeModal = () => setModalImage(null);
+
+  return (
+    <section id="projects" className="min-h-screen flex flex-col">
+      <h1 className="text-6xl text-center mt-8 mb-20">Projects</h1>
+      <div className="flex-1 flex items-start justify-center mb-20">
+        <div className="max-w-[1600px] w-full mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <ProjectTile
+              title="Rocket Game"
+              description="This project is a 2D arcade-style rocket game, developed using Flutter and Dart, designed to showcase Dart’s capabilities for cross-platform development. In the game, players navigate a rocket through space, avoiding asteroids and rescuing stranded astronauts to earn points. The game highlights Dart’s simplicity and efficiency in building interactive and responsive applications.
+
+The backend for this project, developed using ASP.NET Core and C#, is hosted on Azure. It includes a custom API I created for score submission and the management of player score data. The API leverages a PostgreSQL database, hosted on Neon.tech, to store and retrieve player scores efficiently. I used Swagger to streamline the API development process, ensuring clear documentation and organized endpoints.
+
+To enhance the development workflow, I implemented a Continuous Deployment (CD) pipeline using GitHub Actions. This setup automatically deploys the latest commit on the master branch to Azure, ensuring the backend is always up-to-date with the newest features and improvements.
+
+The game's frontend, built with Flutter, is hosted on Firebase, demonstrating seamless integration across platforms. This hosting setup ensures fast and reliable deployment of the game while showcasing the interoperability of modern cloud services.
+
+The project highlights the strengths of Dart for frontend development, C# for backend logic, and PostgreSQL for robust data storage, emphasizing the unique features of each technology. It was created as a presentation for my Organization of Programming Languages class to demonstrate the capabilities of these tools in building cohesive, full-stack solutions."
+              deploymentUrl="https://rocketcs.web.app/"
+              github="https://github.com/Lmx154/dart_demo" // Add GitHub link
+              labels={['Flutter', 'Dart', 'C#', 'ASP.NET', 'SQL', 'Postgres']}
+              image="/rocketGame.png"
+              onImageClick={openModal}
+              completion={100} // Add completion percentage
+            />
+            <ProjectTile
+              title="TASTM"
+              description="This project was initiated as a stepping stone to understanding and addressing the complexities of real-time telemetry collection, inspired by my involvement with the UTRGV Rocket Launchers. Upon joining the team, I identified a significant challenge: the existing telemetry software lacked a robust testing framework, making it difficult to ensure that modifications would not introduce errors or break the system.
+
+Leveraging the principles learned in my Software Engineering course, I developed a testing module designed to simulate a rocket launch environment. Using a Raspberry Pi Pico RP2040 microcontroller programmed with CircuitPython, I created a simulation that emulated the rocket-to-ground station communication process in a controlled environment. This module provided the ability to rigorously test new features and validate updates to the telemetry software, significantly improving its stability and reliability.
+
+Building on this foundation, I developed a new telemetry data acquisition system (TDAS) using modern tools and practices. TDAS was designed to overcome the limitations of the previous system, offering improved functionality, stability, and compatibility with emerging technologies.
+
+This project not only refined the team's telemetry capabilities but also provided me with hands-on experience in designing, testing, and deploying real-time data systems. It exemplifies my ability to identify challenges, apply engineering principles, and leverage modern technologies to deliver practical and impactful solutions."
+              github="https://github.com/Lmx154/TASTM" // Add GitHub link
+              labels={['Python', 'Embedded']}
+              image="/tastm.jpg"
+              onImageClick={openModal}
+              completion={100} // Add completion percentage
+            />
+            <ProjectTile
+              title="TDAS-GUI"
+              description="This project modernized the telemetry visualization system for the UTRGV Rocket Launchers team, addressing limitations of the outdated TAS-GUI, which was hindered by deprecated dependencies and frequent bugs. The new system, built using Tauri 2.0 and leveraging Rust for backend performance and React for the frontend, offers a streamlined and reliable platform for real-time telemetry analysis. Key improvements include seamless serial port communication, high-frequency data handling (up to 100Hz), real-time display of critical metrics like acceleration, altitude, and GPS data, and efficient data recording and parsing.
+
+By incorporating technologies like Vite, Tailwind CSS, and asynchronous Rust libraries such as Tokio, the software ensures smooth data visualization and responsive updates. Customizable buffering options and automated file management further enhance usability. This reimagined system not only resolves the original software's challenges but also provides an extensible framework for future enhancements, reinforcing the team's ability to monitor and analyze telemetry data effectively."
+              github="https://github.com/Lmx154/TDAS-GUI" // Add GitHub link
+              labels={['Rust', 'Tauri', 'Tailwind', 'JavaScript', 'React']}
+              image="das-gui.png"
+              onImageClick={openModal}
+              completion={100} // Add completion percentage
+            />
+            <ProjectTile
+              title="Portfolio Site"
+              description="This project is a complete refresh of my portfolio website, designed to showcase my professional skills and projects while incorporating modern web development practices. Moving beyond my earlier work, this site reflects my growth as a developer and my commitment to learning new tools and technologies.
+
+To enhance scalability and maintainability, I built the site using TypeScript and React, embracing the advantages of strongly typed programming. For styling, I utilized Tailwind CSS, which significantly streamlined the development process and allowed me to create a sleek, responsive design efficiently. The site is hosted on Render to ensure reliable performance and accessibility.
+
+One of the standout features of the site is its dynamic SVG background, which displays a visually engaging grid of diamonds. These diamonds are randomly generated, featuring a mix of hollow and filled shapes, and periodically change to provide a modern, interactive aesthetic. To organize content effectively, I implemented a tile-based system for structuring projects, offering visitors a clean and intuitive way to explore my work.
+
+The contact form is a critical feature of the site, designed for both functionality and security. I incorporated Google reCAPTCHA v2 to prevent spam and ensure the integrity of incoming messages. For email functionality, I opted to use EmailJS to handle email submissions directly from the contact form. This decision was driven by its simplicity and practicality—EmailJS’s free plan supports up to 200 emails per month, which is more than sufficient for a portfolio website. By leveraging EmailJS, I avoided the complexity of building a dedicated email API, while still delivering a seamless and reliable communication channel. To adhere to best practices, I implemented secure API key management using environment variables.
+
+This portfolio site reflects my dedication to continuous improvement and showcases my ability to create modern, visually appealing, and functional web applications. It serves as a dynamic and professional representation of my technical expertise, creativity, and commitment to delivering high-quality work."
+              deploymentUrl="https://luisamartinez.xyz/"
+              github="https://github.com/Lmx154/portfolio" // Add GitHub link
+              labels={['TypeScript', 'React', 'Tailwind', "Node.js"]}
+              image="portfolio.png"
+              onImageClick={openModal}
+              completion={80} // Add completion percentage
+            />
+            <ProjectTile
+              title="Portfolio Site v1"
+              description="My original portfolio site made during Fall 2024 semester. I made this site mostly in HTML/CSS since I wasn't yet familiar with JavaScript. I used this site to learn the basics of web development."
+              github="https://github.com/Lmx154/mywebsite" // Add GitHub link
+              labels={['JavaScript', 'React', "Node.js"]}
+              image="portfolioog.png"
+              onImageClick={openModal}
+              completion={100} // Add completion percentage
+            />
+            <ProjectTile
+              title="Semester Project"
+              description="This gradebook application was developed as the final project for my Software Engineering class, designed to streamline grade management for both teachers and teaching assistants. Acting as the SCRUM Master for this project, I successfully led my team to achieve a perfect score, ensuring the application met all requirements efficiently and effectively. I utilized my leadership skills to manage the development process using Jira, creating and assigning issues based on the provided REST canvas to maintain an organized workflow. The application was deployed to Render, with its PostgreSQL database hosted on Neon.tech, ensuring smooth and reliable performance.
+
+The application was built using Ruby on Rails (7.2.1) as the primary framework, with PostgreSQL for database management and Node.js and Yarn for additional dependencies. RVM was used for local Ruby version management, facilitating smooth development and collaboration. Testing was a critical focus of the project, with RSpec utilized for backend functionality and Cucumber for frontend/UI testing, ensuring a robust and bug-free application.
+
+Key features of the gradebook include the ability for teachers and teaching assistants to view, create, update, delete, and sort grades, as well as view statistics on student performance. Access control was implemented to ensure role-specific functionality. The REST canvas served as the foundation for defining endpoints and application behavior, contributing to a clear and scalable architecture.
+
+This project exemplifies my ability to lead a team, manage development workflows, and deliver a polished application that meets both technical and user needs. It also highlights my proficiency with modern tools and frameworks, including Rails, PostgreSQL, and automated testing with RSpec and Cucumber. Below is a link to my team's deployed project. You can use the following credentials to test it out: Email: ta@ta.com Password: default123"
+              deploymentUrl="https://fp-gradebook-f24-team-f24-401.onrender.com"
+              github="https://github.com/Lmx154/gradebook" // Add GitHub link
+              labels={['Ruby', 'Ruby on Rails', 'SQL', 'Postgres']}
+              image="semesterproject.png"
+              onImageClick={openModal}
+              completion={100} // Add completion percentage
+            />
+            {/* Add more project cards as needed */}
+          </div>
+        </div>
+      </div>
+
+      {modalImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999]" onClick={closeModal}>
+          <div className="relative w-screen h-screen flex items-center justify-center p-4">
+            <img
+              src={modalImage}
+              alt="Full size preview"
+              className="max-w-[95vw] max-h-[95vh] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              className="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors"
+              onClick={closeModal}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};
+
+export default Projects;

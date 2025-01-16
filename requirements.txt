@@ -1,0 +1,6 @@
+faiss-gpu
+sentence-transformers
+transformers
+flask
+numpy
+# If you plan to use CPU FAISS, use `faiss-cpu` instead of `faiss-gpu`.

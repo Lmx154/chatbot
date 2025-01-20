@@ -51,16 +51,23 @@ class Chatbot:
 
         # Generate response
         try:
-            result = self.generator(prompt,
-                                  max_length=256,
-                                  do_sample=True,
-                                  top_p=0.9,
-                                  num_return_sequences=1)
+            result = self.generator(
+                prompt,
+                max_new_tokens=100,
+                do_sample=True,
+                top_p=0.9,
+                num_return_sequences=1,
+                pad_token_id=self.tokenizer.eos_token_id,
+                truncation=True
+            )
 
             if isinstance(result, list) and len(result) > 0:
                 if isinstance(result[0], dict):
-                    return result[0].get('generated_text', '').replace(prompt, '').strip()
-                return str(result[0]).replace(prompt, '').strip()
+                    generated_text = result[0].get('generated_text', '')
+                    # Remove the prompt from the response
+                    response = generated_text[len(prompt):].strip()
+                    return response
+                return str(result[0])[len(prompt):].strip()
 
             return "I couldn't generate a response."
 

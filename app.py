@@ -1,22 +1,24 @@
 # app.py
 
 import os
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from ingest import read_text_file, chunk_text, build_faiss_index
 from chat import Chatbot
 
+# Load environment variables
+load_dotenv()
+
 app = Flask(__name__)
 
-# --- Setup on app startup ---
+# Setup on app startup
 file_path = os.path.join("data", "combined_code.txt")
 text_content = read_text_file(file_path)
 sections = chunk_text(text_content)
 faiss_index, embedding_model = build_faiss_index(sections)
 
-# Initialize the Chatbot with HF model = "gpt2" (change to your preferred model)
+# Initialize the Chatbot
 chatbot = Chatbot(faiss_index, embedding_model, sections, hf_model="gpt2")
-
-# --- Routes ---
 
 @app.route("/chat", methods=["POST"])
 def chat_endpoint():
@@ -29,5 +31,4 @@ def chat_endpoint():
     return jsonify({"response": response})
 
 if __name__ == "__main__":
-    # Run the Flask app
     app.run(host="0.0.0.0", port=5000, debug=True)
